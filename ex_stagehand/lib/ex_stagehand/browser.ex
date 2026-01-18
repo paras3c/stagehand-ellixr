@@ -2,7 +2,7 @@ defmodule ExStagehand.Browser do
   use GenServer
   require Logger
 
-  defstruct [:port, :ws_url, :cdp_pid, :chrome_port, :user_data_dir]
+  defstruct [:port, :ws_url, :cdp_pid, :chrome_port, :user_data_dir, :mode]
 
   # Client API
 
@@ -18,6 +18,19 @@ defmodule ExStagehand.Browser do
 
   @impl true
   def init(opts) do
+    if opts[:connect_url] do
+       init_remote(opts[:connect_url])
+    else
+       init_local(opts)
+    end
+  end
+  
+  defp init_remote(ws_url) do
+    Logger.info("Connecting to Remote Browser at #{ws_url}")
+    {:ok, %__MODULE__{ws_url: ws_url, mode: :remote}}
+  end
+
+  defp init_local(opts) do
     chrome_path = find_chrome_executable()
     user_data_dir = create_temp_dir()
     port = opts[:port] || 9222
@@ -40,7 +53,7 @@ defmodule ExStagehand.Browser do
     # Wait for Chrome to come up and get the WebSocket URL
     ws_url = wait_for_cdp_endpoint(port)
 
-    {:ok, %__MODULE__{port: port, ws_url: ws_url, chrome_port: chrome_port, user_data_dir: user_data_dir}}
+    {:ok, %__MODULE__{port: port, ws_url: ws_url, chrome_port: chrome_port, user_data_dir: user_data_dir, mode: :local}}
   end
 
   @impl true
@@ -60,7 +73,7 @@ defmodule ExStagehand.Browser do
   @impl true
   def terminate(_reason, state) do
      Logger.info("Cleaning up Browser...")
-     if state.user_data_dir do
+     if state.mode == :local and state.user_data_dir do
         File.rm_rf(state.user_data_dir)
      end
      :ok

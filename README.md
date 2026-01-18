@@ -47,21 +47,30 @@ mix deps.get
 
 ## Usage
 
-### launching the Browser
-
-```elixir
-{:ok, browser} = ExStagehand.Browser.start_link()
-```
-
-### Navigating and Acting
-
-```elixir
-{:ok, page} = ExStagehand.Page.start_link(browser)
-ExStagehand.Page.goto(page, "https://example.com")
-
-# Perform an action using natural language
-ExStagehand.Page.act(page, "Click on the 'More Information' link")
-```
+### Launching the Browser
+ 
+ **Local Chrome:**
+ 
+ ```elixir
+ {:ok, browser} = ExStagehand.Browser.start_link()
+ ```
+ 
+ **Remote Browser (e.g. Browserbase):**
+ 
+ ```elixir
+ connect_url = "wss://connect.browserbase.com?apiKey=YOUR_KEY&projectId=YOUR_ID"
+ {:ok, browser} = ExStagehand.Browser.start_link(connect_url: connect_url)
+ ```
+ 
+ ### Navigating and Acting
+ 
+ ```elixir
+ {:ok, page} = ExStagehand.Page.start_link(browser)
+ ExStagehand.Page.goto(page, "https://example.com")
+ 
+ # Perform an action using natural language
+ ExStagehand.Page.act(page, "Click on the 'More Information' link")
+ ```
 
 ### Data Extraction
 
