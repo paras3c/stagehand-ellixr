@@ -1,14 +1,15 @@
 # ExStagehand
 
-ExStagehand is an Elixir implementation of the Stagehand browser automation framework. It provides a native interface for controlling Chrome browsers using natural language instructions and structured data extraction, powered by the Actor Model for concurrency and fault tolerance.
+ExStagehand is an Elixir implementation of the Stagehand browser automation framework, designed to work seamlessly with **Browserbase**. It provides a native interface for controlling Chrome browsers using natural language instructions and structured data extraction, powered by the Actor Model for high concurrency.
 
 ## Overview
 
-This library enables developers to automate browser interactions through a high-level API that bridges the gap between code and AI. By leveraging Large Language Models (LLMs), ExStagehand can interpret natural language commands to perform actions on web pages and extract data according to defined schemas.
+This library enables developers to automate browser interactions through a high-level API that bridges the gap between code and AI. By leveraging Large Language Models (LLMs) and **Browserbase's infrastructure**, ExStagehand allows for scalable, fault-tolerant browser automation directly from the BEAM.
 
 ## Features
 
 *   **AI-Driven Action**: Execute browser actions using natural language instructions (e.g., "Click the login button").
+*   **Browserbase Ready**: Seamlessly connects to Browserbase's cloud infrastructure for scalable, remote browser sessions without local overhead.
 *   **Structured Extraction**: Extract data from web pages into Elixir maps based on provided schemas.
 *   **Intelligent Observation**: Analyze page content to identify interactive elements and capabilities.
 *   **Native Architecture**: Built on OTP (Open Telecom Platform) using GenServers for robust process management.
@@ -18,9 +19,9 @@ This library enables developers to automate browser interactions through a high-
 
 The system is composed of the following core components:
 
-*   **Browser**: A GenServer responsible for managing the operating system process for the Chrome browser.
-*   **Page**: A GenServer representing an individual browser tab, managing independent WebSocket connections for CDP interactions.
-*   **LLM**: A module handling interactions with AI providers (currently supporting OpenAI) for instruction parsing and inference.
+*   **Browser**: A GenServer responsible for managing the connection to the browser (supports both Local Chrome and **Remote Browserbase Sessions**).
+*   **Page**: A GenServer representing an individual browser tab, utilizing CDP Sessions to multiplex commands over a single WebSocket connection.
+*   **LLM**: A module handling interactions with AI providers (currently supporting OpenAI) for instruction parsing.
 
 ## Installation
 
@@ -42,8 +43,9 @@ mix deps.get
 
 ### Prerequisites
 
-*   Google Chrome installed on the host machine.
 *   `OPENAI_API_KEY` environment variable configured.
+*   **Option A (Cloud)**: A [Browserbase](https://browserbase.com) API Key and Project ID.
+*   **Option B (Local)**: Google Chrome installed on the host machine.
 
 ## Usage
 
