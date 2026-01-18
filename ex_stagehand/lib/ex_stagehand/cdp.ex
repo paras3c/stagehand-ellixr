@@ -8,13 +8,16 @@ defmodule ExStagehand.CDP do
     WebSockex.start_link(url, __MODULE__, %{callbacks: %{}, event_subscribers: []})
   end
 
-  def execute(pid, method, params \\ %{}) do
+  def execute(pid, method, params \\ %{}, opts \\ []) do
     id = get_next_id()
     request = %{
       id: id,
       method: method,
       params: params
     }
+    
+    request = if opts[:session_id], do: Map.put(request, :sessionId, opts[:session_id]), else: request
+
     
     ref = make_ref()
     caller = self()
